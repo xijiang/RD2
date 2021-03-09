@@ -1,5 +1,3 @@
-using SparseArrays, LinearAlgebra, Statistics, StatsPlots, Random
-
 """
 From: Theodorus Meuwissen
 Sent: mandag 28. desember 2020 21:26
