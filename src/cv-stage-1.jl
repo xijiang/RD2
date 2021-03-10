@@ -8,12 +8,7 @@
 - function CV_ebv(training, brding_v, cv_setup, G, A, ID)
 =#
 
-# @load "cv-setup.jld"     dcs gcs ncs
-# @load "drp-training.jld" dts gts nts
-# @load "ebv-all.jld"      dbv gbv nbv
-# @load "GAID.jld"         G A ID;
-
-function cv_n()
+function cv_n(nts, ncs, nbv, ID, G, A)
     ############################################################################
     # Norwegian data
     # note: variables end with '_n' are for Norwegian data
@@ -35,31 +30,34 @@ function cv_n()
     bvg_nw_n, bva_nw_n = compare(yt_n, yv_n, gi_n, ai_n);
 
     # Visualization of above data
+    pdf = joinpath(dat_dir, "run/pdf")
     ## G vs. A
     tmp = randsubseq(ix_n, .023)  # only take a subset of ix_n
     scatter(vec(A[tmp, tmp]), vec(G[tmp, tmp]),
-            leg=false, xlabel="A matrix sub", ylabel="G matrix sub", ms=1)
-    savefig("GvA_n.png")
+            leg=false, xlabel="A matrix sub",
+            ylabel="G matrix sub", ms=1, dpi=300)
+    savefig(joinpath(pdf, "n_GvA.pdf"))
 
     ## DRP vs EBV, in the training set
     milk_drp_n = select(nts, :ID, r"Milk")
     milk_ebv_n = select(nbv, :ID, r"Milk")
     tmp = innerjoin(milk_drp_n, milk_ebv_n, on=:ID, renamecols = "_drp" => "_ebv")
     @df tmp scatter(:Milk_drp, :Milk_ebv,
-                    ms = 1, xlabel = "Milk DRP", ylabel= "Milk_ebv", legend = false)
-    savefig("DRPvEBV_n.png")
+                    ms = 1, xlabel = "Milk DRP", ylabel= "Milk_ebv",
+                    legend = false, dpi=300)
+    savefig(joinpath(pdf, "n_DRPvEBV.pdf"))
 
     ## EBV vs current GEBV, in the validation set
-    p1 = scatter(yv_n, bvg_wt_n, leg=false, ms=1, ylabel="weighted")
+    p1 = scatter(yv_n, bvg_wt_n, leg=false, ms=1, ylabel="weighted", dpi=300)
     p2 = scatter(yv_n, bva_wt_n, leg=false, ms=1)
     p3 = scatter(yv_n, bvg_nw_n, leg=false, ms=1, ylabel="no weight", xlabel = "G")
     p4 = scatter(yv_n, bva_nw_n, leg=false, ms=1, xlabel="A")
     plot(p1, p2, p3, p4, layout=(2,2))
-    savefig("EBVvsNEW_n.png")
+    savefig(joinpath(pdf, "n_EBVvsNEW.pdf"))
     # Note x-axis are all EBV, y-axis are EBV from current analysis.
 end
 
-function cv_d()
+function cv_d(dts, dcs, dbv, ID, G, A)
     ################################################################################
     # Norwegian data
     # note: variables end with '_n' are for Norwegian data
@@ -81,31 +79,35 @@ function cv_d()
     bvg_nw_d, bva_nw_d = compare(yt_d, yv_d, gi_d, ai_d);
 
     # Visualization of above data
+    pdf = joinpath(dat_dir, "run/pdf")
     ## G vs. A
     tmp = randsubseq(ix_d, .05) # only take a subset of ix_d
     scatter(vec(A[tmp, tmp]), vec(G[tmp, tmp]),
-            leg=false, xlabel="A matrix sub", ylabel="G matrix sub", ms=1)
-    savefig("GvA_d.png")
+            leg=false, xlabel="A matrix sub", ylabel="G matrix sub",
+            ms=1, dpi=300)
+    savefig(joinpath(pdf, "d_GvA.pdf"))
 
     ## DRP vs EBV, in the training set
     milk_drp_d = select(dts, :ID, r"Milk")
     milk_ebv_d = select(dbv, :ID, r"Milk")
     tmp = innerjoin(milk_drp_d, milk_ebv_d, on=:ID, renamecols = "_drp" => "_ebv")
     @df tmp scatter(:Milk_drp, :Milk_ebv,
-                    ms = 1, xlabel = "Milk DRP", ylabel= "Milk_ebv", legend = false)
-    savefig("DRPvEBV_d.png")
+                    ms = 1, xlabel = "Milk DRP", ylabel= "Milk_ebv",
+                    dpi=300, legend = false)
+    savefig(joinpath(pdf, "d_DRPvEBV.pdf"))
 
     ## EBV vs current GEBV, in the validation set
-    p1 = scatter(yv_d, bvg_wt_d, leg=false, ms=1, ylabel="weighted")
-    p2 = scatter(yv_d, bva_wt_d, leg=false, ms=1)
-    p3 = scatter(yv_d, bvg_nw_d, leg=false, ms=1, ylabel="no weight", xlabel = "G")
-    p4 = scatter(yv_d, bva_nw_d, leg=false, ms=1, xlabel="A")
+    p1 = scatter(yv_d, bvg_wt_d, leg=false, ms=1, ylabel="weighted", dpi=300)
+    p2 = scatter(yv_d, bva_wt_d, leg=false, ms=1, dpi=300)
+    p3 = scatter(yv_d, bvg_nw_d, leg=false, ms=1, ylabel="no weight",
+                 xlabel = "G", dpi=300)
+    p4 = scatter(yv_d, bva_nw_d, leg=false, ms=1, xlabel="A", dpi=300)
     plot(p1, p2, p3, p4, layout=(2,2))
-    savefig("EBVvsNEW_d.png")
+    savefig(joinpath(pdf, "d_EBVvsNEW.pdf"))
     # Note x-axis are all EBV, y-axis are EBV from current analysis.
 end
 
-function cv_g()
+function cv_g(gts, gcs, gbv, ID, G, A)
     ################################################################################
     # Norwegian data
     # note: variables end with '_n' are for Norwegian data
@@ -127,27 +129,31 @@ function cv_g()
     bvg_nw_g, bva_nw_g = compare(yt_g, yv_g, gi_g, ai_g);
 
     # Visualization of above data
+    pdf = joinpath(dat_dir, "run/pdf")
     ## G vs. A
     tmp = randsubseq(ix_g, .2)  # only take a subset of ix_g
     scatter(vec(A[tmp, tmp]), vec(G[tmp, tmp]),
-            leg=false, xlabel="A matrix sub", ylabel="G matrix sub", ms=1)
-    savefig("GvA_g.png")
+            leg=false, xlabel="A matrix sub", ylabel="G matrix sub",
+            dpi=300, ms=1)
+    savefig(joinpath(pdf, "GvA_g.pdf"))
 
     ## DRP vs EBV, in the training set
     milk_grp_g = select(gts, :ID, r"Milk")
     milk_ebv_g = select(gbv, :ID, r"Milk")
     tmp = innerjoin(milk_grp_g, milk_ebv_g, on=:ID, renamecols = "_grp" => "_ebv")
     @df tmp scatter(:Milk_grp, :Milk_ebv,
-                    ms = 1, xlabel = "Milk DRP", ylabel= "Milk_ebv", legend = false)
-    savefig("DRPvEBV_g.png")
+                    ms = 1, xlabel = "Milk DRP", ylabel= "Milk_ebv",
+                    dpi=300, legend = false)
+    savefig(joinpath(pdf, "DRPvEBV_g.pdf"))
 
     ## EBV vs current GEBV, in the validation set
-    p1 = scatter(yv_g, bvg_wt_g, leg=false, ms=1, ylabel="weighted")
-    p2 = scatter(yv_g, bva_wt_g, leg=false, ms=1)
-    p3 = scatter(yv_g, bvg_nw_g, leg=false, ms=1, ylabel="no weight", xlabel = "G")
-    p4 = scatter(yv_g, bva_nw_g, leg=false, ms=1, xlabel="A")
+    p1 = scatter(yv_g, bvg_wt_g, leg=false, ms=1, ylabel="weighted", dpi=300)
+    p2 = scatter(yv_g, bva_wt_g, leg=false, ms=1, dpi=300)
+    p3 = scatter(yv_g, bvg_nw_g, leg=false, ms=1, ylabel="no weight",
+                 dpi=300, xlabel = "G")
+    p4 = scatter(yv_g, bva_nw_g, leg=false, ms=1, xlabel="A", dpi=300)
     plot(p1, p2, p3, p4, layout=(2,2))
-    savefig("EBVvsNEW_g.png")
+    savefig(joinpath(pdf, "EBVvsNEW_g.pdf"))
     # Note x-axis are all EBV, y-axis are EBV from current analysis.
 end
 
@@ -190,3 +196,31 @@ end
 #    id = select(ts, :ID)
 #    tt = select(inner
 #end
+"""
+    function sum_stage_1()
+---
+## The plotting part
+Plot
+- DRP vs. EBV
+- EBV vs. New
+- G vs. A
+
+for each country.
+
+## Cross-validation part
+To be summed
+"""
+function sum_stage_1()
+    @info "Loading data from Stage I"
+    # Note: variable names must be include here
+    # They can be omitted if in a REPL
+    @load "$dat_dir/jld/cv-setup.jld"     dcs gcs ncs
+    @load "$dat_dir/jld/drp-training.jld" dts gts nts
+    @load "$dat_dir/jld/ebv-all.jld"      dbv gbv nbv
+    @load "$dat_dir/jld/GAID.jld"         G A ID
+
+    @info "Norwegian data"
+    cv_n(nts, ncs, nbv, ID, G, A)
+    cv_d(dts, dcs, dbv, ID, G, A)
+    cv_g(gts, gcs, gbv, ID, G, A)
+end
