@@ -49,9 +49,10 @@ function cv_n(nts, ncs, nbv, ID, G, A)
 
     ## EBV vs current GEBV, in the validation set
     p1 = scatter(yv_n, bvg_wt_n, leg=false, ms=1, ylabel="weighted", dpi=300)
-    p2 = scatter(yv_n, bva_wt_n, leg=false, ms=1)
-    p3 = scatter(yv_n, bvg_nw_n, leg=false, ms=1, ylabel="no weight", xlabel = "G")
-    p4 = scatter(yv_n, bva_nw_n, leg=false, ms=1, xlabel="A")
+    p2 = scatter(yv_n, bva_wt_n, leg=false, ms=1, dpi=300)
+    p3 = scatter(yv_n, bvg_nw_n, leg=false, ms=1, ylabel="no weight",
+                 xlabel = "G", dpi=300)
+    p4 = scatter(yv_n, bva_nw_n, leg=false, ms=1, xlabel="A", dpi=300)
     plot(p1, p2, p3, p4, layout=(2,2))
     savefig(joinpath(pdf, "n_EBVvsNEW.pdf"))
     # Note x-axis are all EBV, y-axis are EBV from current analysis.
@@ -135,7 +136,7 @@ function cv_g(gts, gcs, gbv, ID, G, A)
     scatter(vec(A[tmp, tmp]), vec(G[tmp, tmp]),
             leg=false, xlabel="A matrix sub", ylabel="G matrix sub",
             dpi=300, ms=1)
-    savefig(joinpath(pdf, "GvA_g.pdf"))
+    savefig(joinpath(pdf, "g_GvA.pdf"))
 
     ## DRP vs EBV, in the training set
     milk_grp_g = select(gts, :ID, r"Milk")
@@ -144,7 +145,7 @@ function cv_g(gts, gcs, gbv, ID, G, A)
     @df tmp scatter(:Milk_grp, :Milk_ebv,
                     ms = 1, xlabel = "Milk DRP", ylabel= "Milk_ebv",
                     dpi=300, legend = false)
-    savefig(joinpath(pdf, "DRPvEBV_g.pdf"))
+    savefig(joinpath(pdf, "g_DRPvEBV.pdf"))
 
     ## EBV vs current GEBV, in the validation set
     p1 = scatter(yv_g, bvg_wt_g, leg=false, ms=1, ylabel="weighted", dpi=300)
@@ -153,7 +154,7 @@ function cv_g(gts, gcs, gbv, ID, G, A)
                  dpi=300, xlabel = "G")
     p4 = scatter(yv_g, bva_nw_g, leg=false, ms=1, xlabel="A", dpi=300)
     plot(p1, p2, p3, p4, layout=(2,2))
-    savefig(joinpath(pdf, "EBVvsNEW_g.pdf"))
+    savefig(joinpath(pdf, "g_EBVvsNEW.pdf"))
     # Note x-axis are all EBV, y-axis are EBV from current analysis.
 end
 
@@ -188,14 +189,6 @@ function CV_ebv(training, brding_v, cv_setup, G, A, ID)
     _, _ = compare(yt, yv, gi, ai)
 end
 
-#function hist(ts, cs, df, ID)
-#    @load "cv-setup.jld"     dcs gcs ncs
-#    @load "drp-training.jld" dts gts nts
-#    @load "ebv-all.jld"      dbv gbv nbv
-#    @load "GAID.jld"         G A ID;
-#    id = select(ts, :ID)
-#    tt = select(inner
-#end
 """
     function sum_stage_1()
 ---
@@ -219,8 +212,13 @@ function sum_stage_1()
     @load "$dat_dir/jld/ebv-all.jld"      dbv gbv nbv
     @load "$dat_dir/jld/GAID.jld"         G A ID
 
-    @info "Norwegian data"
-    cv_n(nts, ncs, nbv, ID, G, A)
+    @info "Using phenotypes"
     cv_d(dts, dcs, dbv, ID, G, A)
     cv_g(gts, gcs, gbv, ID, G, A)
+    cv_n(nts, ncs, nbv, ID, G, A)
+    
+    @info "Using breeding values"
+    CV_ebv(dts, dbv, dcs, G, A, ID)
+    CV_ebv(gts, gbv, gcs, G, A, ID)
+    CV_ebv(nts, nbv, ncs, G, A, ID)
 end
