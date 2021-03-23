@@ -1,7 +1,7 @@
 name = "RD2"
 uuid = "6214b931-aaad-44f3-8279-ee50d8796e21"
 authors = ["Xijiang Yu <xijiang@users.noreply.github.com>"]
-version = "0.1.4"
+version = "0.1.5"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

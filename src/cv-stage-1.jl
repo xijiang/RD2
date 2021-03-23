@@ -208,7 +208,7 @@ function sum_stage_1()
     # Note: variable names must be include here
     # They can be omitted if in a REPL
     @load "$dat_dir/jld/cv-setup.jld"     dcs gcs ncs
-    @load "$dat_dir/jld/drp-training.jld" dts gts nts
+    @load "$dat_dir/jld/drp-training-2020-07-02.jld" dts gts nts
     @load "$dat_dir/jld/ebv-all.jld"      dbv gbv nbv
     @load "$dat_dir/jld/GAID.jld"         G A ID
 

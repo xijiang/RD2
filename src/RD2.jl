@@ -9,6 +9,8 @@ include("workflow.jl")
 include("milk.jl")
 include("compare.jl")
 include("cv-stage-1.jl")
+include("refresh-data.jl")
+include("tst/cv.jl")
 
 export workflow
 
